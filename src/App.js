@@ -7,7 +7,7 @@ const Table = ({ children }) => <table className="w-full border-collapse border 
 
 export default function CRMApp() {
   const [leads, setLeads] = useState([]);
-  const [newLead, setNewLead] = useState({ name: "", contact: "", phone: "", email: "", followUpDate: "", dateCalled: "", notes: "", activityLog: [], score: 0 });
+  const [newLead, setNewLead] = useState({ name: "", contact: "", phone: "", email: "", followUpDate: "", dateCalled: "", notes: "", activityLog: "", score: 0 });
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -26,8 +26,8 @@ export default function CRMApp() {
   };
 
   const addLead = () => {
-    setLeads([...leads, { ...newLead, id: generateUniqueId(), status: "New", dateCalled: new Date().toLocaleDateString(), activityLog: [], score: 0 }]);
-    setNewLead({ name: "", contact: "", phone: "", email: "", followUpDate: "", notes: "", dateCalled: "", activityLog: [], score: 0 });
+    setLeads([...leads, { ...newLead, id: generateUniqueId(), status: "New", dateCalled: new Date().toLocaleDateString(), activityLog: "", score: 0 }]);
+    setNewLead({ name: "", contact: "", phone: "", email: "", followUpDate: "", notes: "", dateCalled: "", activityLog: "", score: 0 });
   };
 
   return (
@@ -65,14 +65,14 @@ export default function CRMApp() {
           {leads.map((lead) => (
             <tr key={lead.id} className="border-b border-[#0073E6] text-left">
               <td className="p-2"><input type="checkbox" className="lead-checkbox" data-id={lead.id} /></td>
-              <td className="p-2"><Input type="text" value={lead.name} /></td>
-              <td className="p-2"><Input type="text" value={lead.contact} /></td>
-              <td className="p-2"><Input type="text" value={lead.phone} /></td>
-              <td className="p-2"><Input type="text" value={lead.email} /></td>
-              <td className="p-2"><Input type="text" value={lead.status} /></td>
-              <td className="p-2"><Input type="date" value={lead.followUpDate} /></td>
-              <td className="p-2"><textarea className="p-2 border rounded w-full bg-white text-black" value={lead.activityLog?.join('\n')}></textarea></td>
-              <td className="p-2"><input type="number" className="p-2 border rounded w-full bg-white text-black" value={lead.score || 0} /></td>
+              <td className="p-2"><Input type="text" value={lead.name} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, name: e.target.value } : l))} /></td>
+              <td className="p-2"><Input type="text" value={lead.contact} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, contact: e.target.value } : l))} /></td>
+              <td className="p-2"><Input type="text" value={lead.phone} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, phone: e.target.value } : l))} /></td>
+              <td className="p-2"><Input type="text" value={lead.email} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, email: e.target.value } : l))} /></td>
+              <td className="p-2"><Input type="text" value={lead.status} disabled /></td>
+              <td className="p-2"><Input type="date" value={lead.followUpDate} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, followUpDate: e.target.value } : l))} /></td>
+              <td className="p-2"><textarea className="p-2 border rounded w-full bg-white text-black" value={lead.activityLog} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, activityLog: e.target.value } : l))}></textarea></td>
+              <td className="p-2"><input type="number" className="p-2 border rounded w-full bg-white text-black" value={lead.score} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, score: parseInt(e.target.value, 10) } : l))} /></td>
               <td className="p-2"><input type="text" className="p-2 border rounded w-full bg-white text-black" value={lead.dateCalled} disabled /></td>
             </tr>
           ))}
@@ -81,6 +81,11 @@ export default function CRMApp() {
     </>
   );
 }
+
+
+
+
+
 
 
 
