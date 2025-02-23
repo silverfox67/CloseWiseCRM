@@ -1,0 +1,82 @@
+import { useState, useEffect } from "react";
+
+const Card = ({ children }) => <div className="p-4 border rounded-lg shadow bg-white text-black w-full">{children}</div>;
+const Button = ({ children, onClick, className }) => <button className={`p-2 text-white rounded ${className}`} onClick={onClick}>{children}</button>;
+const Input = ({ type = "text", ...props }) => <input className="p-2 border rounded w-full bg-white text-black" type={type} {...props} />;
+const Table = ({ children }) => <table className="w-full border-collapse border text-white">{children}</table>;
+
+export default function CRMApp() {
+  const [leads, setLeads] = useState([]);
+  const [newLead, setNewLead] = useState({ name: "", contact: "", phone: "", email: "", followUpDate: "", dateCalled: "", notes: "", activityLog: [], score: 0 });
+
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    leads.forEach(lead => {
+      if (lead.followUpDate === today) {
+        alert(`Reminder: Follow up with ${lead.name} today!`);
+      }
+    });
+  }, [leads]);
+
+  const addLead = () => {
+    setLeads([...leads, { ...newLead, id: Date.now(), status: "New", dateCalled: new Date().toLocaleDateString(), activityLog: [], score: 0 }]);
+    setNewLead({ name: "", contact: "", phone: "", email: "", followUpDate: "", notes: "", dateCalled: "", activityLog: [], score: 0 });
+  };
+
+  return (
+    <div className="p-4 bg-[#A0A3A8] min-h-screen text-white w-full flex flex-col items-center">
+      <h1 className="text-3xl font-bold mb-4 text-[#0073E6] w-full text-center">Simple CRM</h1>
+      <Card className="w-full max-w-6xl border border-[#0073E6]">
+        <h2 className="text-lg font-semibold text-[#0073E6]">Add New Lead</h2>
+        <div className="grid grid-cols-2 gap-4 mt-2">
+          <Input placeholder="Business Name" value={newLead.name} onChange={(e) => setNewLead({ ...newLead, name: e.target.value })} />
+          <Input placeholder="Contact Person" value={newLead.contact} onChange={(e) => setNewLead({ ...newLead, contact: e.target.value })} />
+          <Input placeholder="Phone Number" value={newLead.phone} onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })} />
+          <Input placeholder="Email" value={newLead.email} onChange={(e) => setNewLead({ ...newLead, email: e.target.value })} />
+        </div>
+        <Button className="mt-2 bg-[#0073E6] w-full" onClick={addLead}>Add Lead</Button>
+      </Card>
+      <Table className="w-full max-w-6xl mt-4 border border-[#0073E6]">
+        <thead>
+          <tr className="bg-[#FFD700] text-left text-black">
+            <th className="p-2 text-left">Business</th>
+            <th className="p-2 text-left">Contact</th>
+            <th className="p-2 text-left">Phone</th>
+            <th className="p-2 text-left">Email</th>
+            <th className="p-2 text-left">Status</th>
+            <th className="p-2 text-left">Follow-Up Date</th>
+            <th className="p-2 text-left">Activity Log</th>
+            <th className="p-2 text-left">Score</th>
+            <th className="p-2 text-left">Date Called</th>
+          </tr>
+        </thead>
+        <tbody>
+          {leads.map((lead) => (
+            <tr key={lead.id} className="border-b border-[#0073E6] text-left">
+              <td className="p-2"><Input type="text" value={lead.name} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, name: e.target.value } : l))} /></td>
+              <td className="p-2"><Input type="text" value={lead.contact} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, contact: e.target.value } : l))} /></td>
+              <td className="p-2"><Input type="text" value={lead.phone} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, phone: e.target.value } : l))} /></td>
+              <td className="p-2"><Input type="text" value={lead.email} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, email: e.target.value } : l))} /></td>
+              <td className="p-2">
+                <select className="p-2 border rounded w-full bg-white text-black" value={lead.status} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, status: e.target.value } : l))}>
+                  <option value="New">New</option>
+                  <option value="Follow-up">Follow-up</option>
+                  <option value="Ready">Ready</option>
+                  <option value="Negotiation">Negotiation</option>
+                  <option value="Closed Won">Closed Won</option>
+                  <option value="Closed Lost">Closed Lost</option>
+                </select>
+              </td>
+              <td className="p-2"><Input type="date" value={lead.followUpDate} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, followUpDate: e.target.value } : l))} /></td>
+              <td className="p-2"><textarea className="p-2 border rounded w-full bg-white text-black" value={lead.activityLog ? lead.activityLog.join('\n') : ''} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, activityLog: e.target.value.split('\n') } : l))}></textarea></td>
+              <td className="p-2"><input type="number" className="p-2 border rounded w-full bg-white text-black" value={lead.score || 0} onChange={(e) => setLeads(leads.map(l => l.id === lead.id ? { ...l, score: Number(e.target.value) } : l))} /></td>
+              <td className="p-2"><input type="text" className="p-2 border rounded w-full bg-white text-black" value={lead.dateCalled} disabled /></td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
+  );
+}
+
+
